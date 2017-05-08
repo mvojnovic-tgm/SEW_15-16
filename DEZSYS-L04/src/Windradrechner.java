@@ -1,0 +1,75 @@
+
+import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.Scanner;
+
+import org.apache.xmlrpc.server.PropertyHandlerMapping;
+import org.apache.xmlrpc.server.XmlRpcServer;
+import org.apache.xmlrpc.webserver.WebServer;
+
+import src.Commands;
+import src.CommandsImpl;
+
+public class Windradrechner {
+	  
+private static  int port;
+private static String start;
+private static String aus;
+private static String bl;
+private static String wl;
+private static String bw;
+private static String gw;
+
+
+public static void main(String[] args) throws Exception {
+
+
+  Scanner s = new Scanner(System.in);
+  String str = s.nextLine();
+  port = Integer.parseInt(str);
+	// Initialize Web- and RPCServer
+  WebServer webserver = new WebServer (port);
+  XmlRpcServer xmlRpcServer = webserver.getXmlRpcServer();
+  
+  // Set Handler for Calculator Instance
+  //PropertyHandlerMapping phm = new PropertyHandlerMapping();
+//  PropertyHandlerMapping phm2 = new PropertyHandlerMapping();
+//  //phm.addHandler("Calculator", Calculator.class );
+//  phm2.addHandler("Calculator2", Calculator2.class);
+  //xmlRpcServer.setHandlerMapping(phm);
+  //xmlRpcServer.setHandlerMapping(phm2);
+  
+  
+  //---------------------------------------------------------------------------------------
+  PropertyHandlerMapping phm = new PropertyHandlerMapping();
+  phm.addHandler("RandomValueGenerator", RandomValueGenerator.class);
+  xmlRpcServer.setHandlerMapping(phm);
+  
+  
+  // Start Webserver
+  webserver.start();
+  System.out.println( "Webserver/XmlRpcServer started successfully!");
+  waitForCommand();
+          
+      }
+
+private static void waitForCommand() {
+	try {
+		System.out.println("try");
+		
+		CommandsImpl cmdI = new CommandsImpl();
+		
+		System.out.println("nach cmdI");
+		LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
+		
+		System.out.println("nachregistry");
+		Naming.rebind(Commands.LOOKUPNAME, cmdI);
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+}
+
+  }

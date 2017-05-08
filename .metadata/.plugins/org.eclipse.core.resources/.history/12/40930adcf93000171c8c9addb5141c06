@@ -1,0 +1,290 @@
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
+
+import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.w3c.dom.*;
+
+
+import org.apache.activemq.ActiveMQConnection;
+import org.apache.activemq.ActiveMQConnectionFactory;
+
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
+import javax.jms.Destination;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
+public class Parkrechner{
+
+	private static int port;
+	private static final String host = "localhost";
+	private static ArrayList<String[]> wts;
+	
+
+	private static String user = ActiveMQConnection.DEFAULT_USER;
+	private static String password = ActiveMQConnection.DEFAULT_PASSWORD;
+	private static String url = ActiveMQConnection.DEFAULT_BROKER_URL;
+	private static String subject;
+	
+	
+	public static void main(String[] args) throws Exception {
+		
+		//Name des Parkrechners, Parkrechner1...3
+		subject = (new Scanner(System.in)).nextLine();
+		
+		wts = new ArrayList<>();
+		
+		//Die Windraeder aauf den Ports 8080, 8081, 8082
+		ArrayList<XmlRpcClient> client = new ArrayList<>();
+		//VORDEFINIERTE SERVER PORTS
+		XmlRpcClientConfigImpl conf0 = new XmlRpcClientConfigImpl();
+		conf0.setServerURL(new URL("http://"+host+":"+8080+"/xmlrpc"));
+		XmlRpcClient xrc0 = new XmlRpcClient();
+		xrc0.setConfig(conf0);
+		client.add(xrc0);
+		
+		XmlRpcClientConfigImpl conf1 = new XmlRpcClientConfigImpl();
+		conf1.setServerURL(new URL("http://"+host+":"+8081+"/xmlrpc"));
+		XmlRpcClient xrc1 = new XmlRpcClient();
+		xrc1.setConfig(conf1);
+		client.add(xrc1);
+		
+		XmlRpcClientConfigImpl conf2 = new XmlRpcClientConfigImpl();
+		conf2.setServerURL(new URL("http://"+host+":"+8082+"/xmlrpc"));
+		XmlRpcClient xrc2 = new XmlRpcClient();
+		xrc2.setConfig(conf2);
+		client.add(xrc2);
+		
+		
+		//MANUELES HINZUFUEGEN VON SERVERS UEBER DIE KONSOLE
+		//while(true){
+			//System.out.println("Welches Windkraftwerk wollen sie abfragen?(Port)");
+			//Scanner s = new Scanner(System.in);
+			//String str = s.nextLine();
+			//if(str.equals("exit"))break;
+			//
+			//port = Integer.parseInt(str);
+			// Set Client Configuration
+			//XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+			//config.setServerURL(new URL("http://"+ host + ":" + port + "/xmlrpc") );
+			//XmlRpcClient client = new XmlRpcClient();
+			//client.setConfig( config );
+			
+			//------------------------------------------------------------------------------------------------------
+			//XmlRpcClientConfigImpl conf = new XmlRpcClientConfigImpl();
+			//conf.setServerURL(new URL("http://"+host+":"+port+"/xmlrpc"));
+			//XmlRpcClient xrc = new XmlRpcClient();
+			//xrc.setConfig(conf);
+			//client.add(xrc);
+			
+			
+		
+			// Set Parameter
+			Object[] params = new Object[]{0,0};
+			
+			// RPC Call
+			//Integer result = (Integer) client.execute("Calculator2.mul", params);
+			
+			
+			//---------------------------------------------------
+			//Integer result = (Integer)client.execute("RandomValueGenerator.testRnd", params);
+			String[] help = new String[7];
+			
+			//Hier werden die Werte der Parkrechner einberufen
+			for(int i = 0; i<client.size();i++){
+				/*
+				System.out.println("Windkraft: "+i);
+				System.out.println(client.get(i).execute("RandomValueGenerator.temp", params)+" Grad Celsius");
+				System.out.println(client.get(i).execute("RandomValueGenerator.akt_Strom", params)+ " I");
+				System.out.println(client.get(i).execute("RandomValueGenerator.b_Strom", params)+" I");
+				System.out.println(client.get(i).execute("RandomValueGenerator.d_Zahl", params)+" pro min");
+				System.out.println(client.get(i).execute("RandomValueGenerator.wind_v", params)+" km/h");
+				System.out.println(client.get(i).execute("RandomValueGenerator.b_Pos", params)+" Grad");
+				*/
+				help = new String[7];
+				help[0] = i+"";
+				help[1] = client.get(i).execute("RandomValueGenerator.temp", params)+"";
+				help[2] = client.get(i).execute("RandomValueGenerator.akt_Strom", params)+"";
+				help[3] = client.get(i).execute("RandomValueGenerator.b_Leistung", params)+"";
+				help[4] = client.get(i).execute("RandomValueGenerator.d_Zahl", params)+"";
+				help[5] = client.get(i).execute("RandomValueGenerator.wind_v", params)+"";
+				help[6] = client.get(i).execute("RandomValueGenerator.b_Pos", params) +"";
+				
+				
+				
+				
+				wts.add(help);
+				
+				//---------------------------------------
+//				for(int j = 0; j<=i;j++){
+//				System.out.println("------------------------------------------------");
+//				System.out.println(wts.get(j)[0]);
+//				System.out.println(wts.get(j)[1]);
+//				System.out.println(wts.get(j)[2]);
+//				System.out.println(wts.get(j)[3]);
+//				}
+				
+				
+				//System.out.println(wts.get(0)[0]);
+
+			}		
+//			for(int i = 0; i<wts.size(); i++){
+//				for(int j = 0;j<wts.get(i).length; j++){
+//					System.out.println(wts.get(i)[j]);
+//				}
+//			}
+			
+			
+			safeToXml();
+			
+			sendToQueue();
+			// Display Result
+			//System.out.println( result );
+		
+		//}
+
+	}
+	
+	/**
+	 * In die Queue senden unter dem Parkrechner Namen
+	 */
+	private static void sendToQueue() {
+		
+		
+		
+		
+		// Create the connection.
+		  Session session = null;
+		  Connection connection = null;
+		  MessageProducer producer = null;
+		  Destination destination = null;
+				
+		  try {
+		    	
+				ConnectionFactory connectionFactory = new ActiveMQConnectionFactory( user, password, url );
+				connection = connectionFactory.createConnection();
+				connection.start();
+			
+				// Create the session
+				session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+				
+				Queue q = session.createQueue(subject);
+				
+				//destination = (Destination)q;
+					  
+				// Create the producer.
+				producer = session.createProducer(q);
+				//producer.setDeliveryMode( DeliveryMode.PERSISTENT );
+				
+				// Create the message
+				ObjectMessage msg = session.createObjectMessage();
+				msg.setObject(wts);
+				
+				//TextMessage message = session.createTextMessage( "MaxMustermann [ xxx.xxx.xxx.xxx ]: This message was sent at (ms): " + System.currentTimeMillis() );
+				producer.send(msg);
+				connection.stop();
+		      
+		  } catch (Exception e) {
+		  	
+		  	System.out.println("[MessageProducer] Caught: " + e);
+		  	e.printStackTrace();
+		  	
+		  } finally {
+		  	
+				try { producer.close(); } catch ( Exception e ) {}
+				try { session.close(); } catch ( Exception e ) {}
+				try { connection.close(); } catch ( Exception e ) {}
+				
+		  }
+		
+		
+		
+	}
+
+	/**
+	 * In eine XML Datei speichern
+	 */
+	public static void safeToXml(){
+		Document dom;
+	    Element e = null;
+	    
+	    for(int i = 0; i< wts.size(); i++){
+	    	System.out.println(wts.get(i)[0]);
+	    }
+	    
+	    // instance of a DocumentBuilderFactory
+	    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+	    try {
+	        // use factory to get an instance of document builder
+	        DocumentBuilder db = dbf.newDocumentBuilder();
+	        // create instance of DOM
+	        dom = db.newDocument();
+
+	        // create the root element
+	        Element rootEle = dom.createElement(subject);
+
+	        // create data elements and place them under root
+	        //e = dom.createElement("role1");
+	        //e.appendChild(dom.createTextNode(role1));
+	        //rootEle.appendChild(e);
+	        
+	        //Werte als Attribute fuer jedes Windrad setzen
+	        for(int i = 0; i< wts.size(); i++){
+	        	System.out.println(i);
+		        e = dom.createElement("windrad");
+		        e.setAttribute("number"+i, wts.get(i)[0]);
+		        e.setAttribute("temp", wts.get(i)[1]);
+		        e.setAttribute("akt_Temp", wts.get(i)[2]);
+		        e.setAttribute("b_Strom", wts.get(i)[3]);
+		        e.setAttribute("d_Zahl", wts.get(i)[4]);
+		        e.setAttribute("wind_v", wts.get(i)[5]);
+		        e.setAttribute("b_Pos", wts.get(i)[6]);
+		        e.appendChild(dom.createTextNode("windrad "+ wts.get(i)[0]));
+		        rootEle.appendChild(e);
+	        }
+	        
+	        
+	        
+	        
+	        
+	        dom.appendChild(rootEle);
+	        
+	        try {
+	            Transformer tr = TransformerFactory.newInstance().newTransformer();
+	            tr.setOutputProperty(OutputKeys.INDENT, "yes");
+	            tr.setOutputProperty(OutputKeys.METHOD, "xml");
+	            tr.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+	            tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "roles.dtd");
+	            tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+	            // send DOM to file
+	            tr.transform(new DOMSource(dom), 
+	                                 new StreamResult(new FileOutputStream(subject+".xml")));
+
+	        } catch (TransformerException te) {
+	            System.out.println(te.getMessage());
+	        } catch (IOException ioe) {
+	            System.out.println(ioe.getMessage());
+	        }
+	    } catch (ParserConfigurationException pce) {
+	        System.out.println("UsersXML: Error trying to instantiate DocumentBuilder " + pce);
+	    }
+	
+	}
+
+}

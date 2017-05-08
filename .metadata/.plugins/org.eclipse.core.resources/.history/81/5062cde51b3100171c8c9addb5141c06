@@ -1,0 +1,16 @@
+
+public class testUmgebung {
+
+	public static void main(String[] args){
+		Windradrechner g = new Windradrechner();
+		try {
+			g.main(args);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		new Windradrechner();
+		new Windradrechner();
+	}
+	
+}

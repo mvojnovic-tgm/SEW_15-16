@@ -1,0 +1,18 @@
+package mvojnovic;
+
+public interface Commands extends java.rmi.Remote{
+
+	public final static String LOOKUPNAME = "commands";
+	
+	public String setBlattwinkel(double winkel);
+	
+	public String setGondelwinkel(double winkel);
+	
+	public String setBlindleistung(double bl);
+	
+	public String setWirkleistung(double wl);
+	
+	public String abschalten();
+	
+	public String starten();	
+}

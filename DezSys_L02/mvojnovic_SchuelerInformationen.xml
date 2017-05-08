@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<SchuelerInformation>
+<abteilung bezAb="HIT"></abteilung>
+<jahrgang bezJg="4CHIT"></jahrgang>
+<name nname="Vojnovic" vname="Mladen"></name>
+<geschlecht gschl="m"></geschlecht>
+<notendurchschnitt nd="1.0">
+<note>7</note>
+</notendurchschnitt>
+<ph></ph>
+</SchuelerInformation>
+	

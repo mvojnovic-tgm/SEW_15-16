@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+		<item value="D:\Schule\Workspace1\webshop\webshop_gui"/>
+		<item value="D:\Schule\Workspace1\TestStringtonkenizer"/>
+		<item value="D:\Schule\Workspace1\Sudoku"/>
+		<item value="D:\Schule\Workspace1\R01d"/>
+		<item value="D:\Schule\Workspace1\R01b"/>
+		<item value="D:\Schule\Workspace1\Mockito"/>
+		<item value="D:\Schule\Workspace1\Dreieck"/>
+	</list>
+	<section name="ExternalProjectImportWizard">
+	</section>
+</section>

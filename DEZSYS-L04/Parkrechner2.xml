@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE Parkrechner2 SYSTEM "roles.dtd">
+<Parkrechner2>
+    <windrad akt_Temp="76.99982586307803" b_Pos="313" b_Strom="13.82752675087938" d_Zahl="74" number0="0" temp="11.033659207983312" wind_v="54.75218888085339">windrad 0</windrad>
+    <windrad akt_Temp="123.12521835791674" b_Pos="193" b_Strom="29.700656263197764" d_Zahl="27" number1="1" temp="70.32345651228574" wind_v="10.619016342141963">windrad 1</windrad>
+    <windrad akt_Temp="35.77678174849437" b_Pos="244" b_Strom="5.889274950669468" d_Zahl="56" number2="2" temp="49.86204210183567" wind_v="142.66312917638018">windrad 2</windrad>
+</Parkrechner2>
