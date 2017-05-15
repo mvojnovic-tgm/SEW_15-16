@@ -60,6 +60,7 @@
 		<item value="false" key="JarManifestWizardPage.SAVE_MANIFEST"/>
 		<item value="true" key="JarPackageWizardPage.EXPORT_OUTPUT_FOLDER"/>
 		<list key="JarPackageWizardPage.DESTINATION_NAMES_ID">
+			<item value="D:\Schule\mvojnovic.jar"/>
 			<item value="D:\Schule\mvojnovic_DEZSYS04.jar"/>
 			<item value="D:\Schule\mvojnovic_DEZSYS02.jar"/>
 			<item value="C:\Users\Toast\Desktop\mvojnovic_DEZSYS02.jar"/>

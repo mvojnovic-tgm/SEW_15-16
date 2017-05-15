@@ -116,6 +116,7 @@ public class Parkrechner{
 			String[] help = new String[7];
 			
 			//Hier werden die Werte der Parkrechner einberufen
+			System.out.println("size matters"+client.size());
 			for(int i = 0; i<client.size();i++){
 				/*
 				System.out.println("Windkraft: "+i);
@@ -126,6 +127,7 @@ public class Parkrechner{
 				System.out.println(client.get(i).execute("RandomValueGenerator.wind_v", params)+" km/h");
 				System.out.println(client.get(i).execute("RandomValueGenerator.b_Pos", params)+" Grad");
 				*/
+				System.out.println("lel"+i);
 				help = new String[7];
 				help[0] = i+"";
 				help[1] = client.get(i).execute("RandomValueGenerator.temp", params)+"";
