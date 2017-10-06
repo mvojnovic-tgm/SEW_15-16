@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Control {
 	Connection con;
@@ -16,12 +17,14 @@ public class Control {
 	ViewFlights v_flights;
 	ViewPass v_pass;
 	public Control(){
-		
+		System.out.println("Bitte namen der DB eingeben(alles lowercase)");
+		Scanner s = new Scanner(System.in);
+		String db = s.nextLine();
 		
 		try{
 			
-			Class.forName("com.mysql.jdbc.Driver"); 
-			this.con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/flightdata",
+			Class.forName("com."+db+".jdbc.Driver"); 
+			this.con = DriverManager.getConnection("jdbc:"+db+"://127.0.0.1:3306/flightdata",
 					"root","ml7875mysql");
 		}catch(Exception e){
 			e.printStackTrace();
@@ -136,8 +139,27 @@ public class Control {
 	}
 
 	public void getPassengers(String string) {
-		System.out.print(string);
+		try{
+		String query = "select * from passengers where flightnr='"+string+"'";
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery(query);
+		ArrayList<String[]> al = new ArrayList<String[]>();
+		while(rs.next()){
+			String[] help = new String[7];
+			help[0] = ""+rs.getInt("id");
+			help[1] = rs.getString("firstname");
+			help[2] = rs.getString("lastname");
+			help[3] = rs.getString("airline");
+			help[4] = rs.getString("flightnr");
+			help[5] = ""+rs.getInt("rownr");
+			help[6] = rs.getString("seatposition");
+			al.add(help);
+		}
 		
+		this.v_pass = new ViewPass(this,string,al);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 

@@ -23,12 +23,12 @@ public class ViewFlights implements ActionListener{
 		al = flights;
 		f= new JFrame();
 		p = new JPanel();
-		p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
+		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
 		p.add(new JLabel("airline ; flightnr ; departure_time ; destination_time ; planetype"));
 		
 		if(flights.size()<1){
 			JLabel l = new JLabel("Keine Fluege zwischen diesen Flughaefen");
-			f.add(l);
+			p.add(l);
 		}else{
 			bs = new JButton[flights.size()];
 			ls = new JLabel[flights.size()];
