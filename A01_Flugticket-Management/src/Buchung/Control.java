@@ -14,6 +14,7 @@ public class Control {
 	View v;
 	Model m;
 	ViewFlights v_flights;
+	ViewPass v_pass;
 	public Control(){
 		
 		
@@ -131,6 +132,11 @@ public class Control {
 			e.printStackTrace();
 		}
 		this.v_flights = new ViewFlights(this,m,al);
+		
+	}
+
+	public void getPassengers(String string) {
+		System.out.print(string);
 		
 	}
 

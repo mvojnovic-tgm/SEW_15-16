@@ -45,12 +45,14 @@ public class View  implements ActionListener{
 			dd_airport1.disable();
 		}else{
 			dd_airport1 = new JComboBox(this.c.getAirport(this.m.getCountry1()));
+			dd_airport1.setSelectedItem(this.m.getAirport1());
 		}
 		
 		if(this.m.getCountry2().equals("None")){
 			dd_airport2.disable();
 		}else{
 			dd_airport2 = new JComboBox(this.c.getAirport(this.m.getCountry2()));
+			dd_airport2.setSelectedItem(this.m.getAirport2());
 		}
 		
 		dd_airport1.addActionListener(this);
