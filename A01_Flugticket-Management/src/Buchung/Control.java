@@ -12,39 +12,79 @@ import java.util.List;
 public class Control {
 	Connection con;
 	View v;
+	Model m;
 	public Control(){
-		v = new View(this);
+		
 		
 		try{
+			
 			Class.forName("com.mysql.jdbc.Driver"); 
-			con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/flightdata",
+			this.con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/flightdata",
 					"root","ml7875mysql");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		m = new Model();
+		v = new View(this,m);
+		
 	}
 	
-	private ArrayList<String> getCountries() throws SQLException{
+	public String[] getCountries(){
+		try{
 		ArrayList<String> al = new ArrayList<String>();
 		String query = "select name from countries";
-		Statement stmt = con.createStatement();
+		Statement stmt = this.con.createStatement();
 		ResultSet rs = stmt.executeQuery(query);
 		
 		while(rs.next()){
 			al.add(rs.getString("name"));
 		}
-		return al;
+		String[] ret = new String[al.size()+1];
+		ret[0] = "None";
+		for(int i=0;i<ret.length-1;i++){
+			ret[i+1]=al.get(i);
+		}
+		//String[] help = {"lel",";2;"};
+		return ret;
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return  null;
 	}
 	
-	private ArrayList<String> getAirport(String country) throws SQLException{
+	public String[] getAirport(String country){
+		try{
+		String helpQuery = "select code from countries where name='"+country+"'";
+		Statement helpStmt = con.createStatement();
+		ResultSet helpRs = helpStmt.executeQuery(helpQuery);
+		String help = "";
+		while(helpRs.next())help = helpRs.getString("code");
+		
 		ArrayList<String> al = new ArrayList<String>();
-		String query = "select name from airports where country="+country;
+		String query = "select name from airports where country='"+help+"'";
 		Statement stmt = con.createStatement();
 		ResultSet rs = stmt.executeQuery(query);
 		
 		while(rs.next()){
 			al.add(rs.getString("name"));
 		}
-		return al;
+		String[] ret = new String[al.size()+1];
+		ret[0] = "None";
+		for(int i=0;i<ret.length-1;i++){
+			ret[i+1]=al.get(i);
+		}
+		return ret;
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return  null;
 	}
+
+	public void restart() {
+		this.v = new View(this,m);
+		
+	}
+
+
+	
 }
