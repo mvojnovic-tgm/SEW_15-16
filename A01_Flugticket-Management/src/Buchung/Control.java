@@ -13,6 +13,7 @@ public class Control {
 	Connection con;
 	View v;
 	Model m;
+	ViewFlights v_flights;
 	public Control(){
 		
 		
@@ -82,6 +83,54 @@ public class Control {
 
 	public void restart() {
 		this.v = new View(this,m);
+		
+	}
+	
+	public void getFlights(String fromAP, String toAP){
+		String helpQuery1 = "select airportcode from airports where name='"+fromAP+"'";
+		String helpQuery2 = "select airportcode from airports where name='"+toAP+"'";
+		String fromAP_code = "";
+		String toAP_code = "";
+		try {
+			Statement helpStmt1 = con.createStatement();
+			Statement helpStmt2 = con.createStatement();
+			
+			ResultSet helpRs1 = helpStmt1.executeQuery(helpQuery1);
+			ResultSet helpRs2 = helpStmt2.executeQuery(helpQuery2);
+			while(helpRs1.next()){
+				fromAP_code = helpRs1.getString("airportcode");
+			}
+			while(helpRs2.next()){
+				toAP_code = helpRs2.getString("airportcode");
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+		
+		
+		String query = "select airline,flightnr,departure_time,destination_time,planetype  from flights where departure_airport='"+fromAP_code+"' AND  destination_airport='"+toAP_code+"'";
+		ArrayList<String[]> al = new ArrayList<String[]>();
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			
+			while(rs.next()){
+				String[] help = new String[5];
+				help[0] = rs.getString("airline");
+				help[1] = rs.getString("flightnr");
+				help[2] = rs.getString("departure_time");
+				help[3] = rs.getString("destination_time");
+				help[4] = ""+rs.getInt("planetype");
+				al.add(help);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.v_flights = new ViewFlights(this,m,al);
 		
 	}
 
